@@ -1,10 +1,10 @@
-# Project infos
+# Target Infos
 #---------------------------------------------------------------------
 TARGET		:= $(notdir $(CURDIR))
-SOURCES     := $(shell ls -R ./src | grep ./ |  sed -e s/://g | sed -e s/\\n/" "/g)
 
-# Export target
+# Files to compile
 #---------------------------------------------------------------------
+SOURCES     := $(shell ls -R ./src | grep ./ |  sed -e s/://g | sed -e s/\\n/" "/g)
 ASMFILES    := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.asm))
 OBJFILES    := $(addsuffix .obj, $(ASMFILES))
 DIRS        := $(addprefix -i, $(SOURCES))
