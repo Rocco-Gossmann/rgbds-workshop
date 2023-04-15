@@ -1,4 +1,8 @@
+include "core/state.inc"
+
+;===============================================================================
 SECTION "rom", ROM0[$0000]
+;-------------------------------------------------------------------------------
 ; $0000 - $003F: Reset handlers.
 rept 63
     nop
@@ -7,28 +11,24 @@ ret
 
 ; $0040 - $0067: Interrupts.
 ; $0040  VBlank
-reti
-rept 7
-    nop
-endr
+    state_call state_fnc_vblank ; 6 Bytes
+reti ; 1 byte
+nop  ; 1 byte
 
 ; $0048 stats
-reti
-rept 7
-    nop
-endr
+    state_call state_fnc_lcd ; 6 Bytes
+reti ; 1 byte
+nop  ; 1 byte
 
 ; $0050  timer
-reti
-rept 7
-    nop
-endr
+    state_call state_fnc_timer ; 6 Bytes
+reti ; 1 byte
+nop  ; 1 byte
 
 ; $0058 link-cable (serial)
-reti
-rept 7
-    nop
-endr
+    state_call state_fnc_serial ; 6 Bytes
+reti ; 1 byte
+nop  ; 1 byte
 
 ; $0060  Joypad
 reti
@@ -143,3 +143,21 @@ DB $00
 ; $014E- $014F: Global checksum.
 ; Filled by RGBFIX
 DW $0000
+
+
+
+;===============================================================================
+SECTION "main", ROM0[$150]
+;-------------------------------------------------------------------------------
+main::
+    state_init
+
+    change_state STATE_MAIN  
+
+; main-loop
+    .loop:
+        state_call state_fnc_main
+
+        halt ; wait for next vblank
+        nop
+        jr .loop
